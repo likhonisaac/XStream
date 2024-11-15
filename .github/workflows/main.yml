@@ -1,0 +1,48 @@
+name: Fetch Video Data and Update Repository
+
+on:
+  schedule:
+    # Runs the workflow every 12 hours (Cron format)
+    - cron: '0 */12 * * *'  # This will run at the start of every 12th hour
+  push:
+    branches:
+      - main  # Run when code is pushed to the main branch
+
+jobs:
+  fetch_and_update:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Python environment
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run Python script to fetch video data
+    - name: Fetch video data
+      run: python fetch_videos.py
+
+    # Step 5: Commit and push changes
+    - name: Commit and push changes
+      run: |
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "Your Name"
+        git add .
+        git commit -m "Update video data"
+        git push origin main
+
+    # Optional: Clean up and confirm the updates
+    - name: Clean up and confirm updates
+      run: |
+        echo "Video data updated successfully"
