@@ -9,24 +9,21 @@
     <meta name="author" content="XStream Team">
     <title>XStream - Video Streaming</title>
     <style>
-        /* Global Styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #1c1c1c;
-            color: #fff;
+            background-color: #f4f4f4;
+            color: #333;
             overflow-x: hidden;
         }
 
-        /* Container for the entire page */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* Popup for age verification */
         .popup {
             position: fixed;
             top: 0;
@@ -60,14 +57,12 @@
             background-color: #c0392b;
         }
 
-        /* Video Container */
         .video-container {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* Video Player */
         .video-player {
             background-color: #333;
             padding: 20px;
@@ -79,7 +74,6 @@
             border-radius: 8px;
         }
 
-        /* Thumbnails Section */
         .video-thumbnails {
             display: flex;
             flex-wrap: wrap;
@@ -103,12 +97,6 @@
             transform: scale(0.9);
         }
 
-        /* Styling for titles */
-        h2 {
-            color: #e74c3c;
-        }
-
-        /* Pagination */
         .pagination {
             display: flex;
             justify-content: center;
@@ -133,12 +121,16 @@
             background-color: #95a5a6;
             cursor: not-allowed;
         }
+
+        h2 {
+            color: #e74c3c;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Warning popup for 18+ content -->
+        <!-- Age Verification Popup -->
         <div id="age-warning" class="popup">
             <div class="popup-content">
                 <h2>Age Verification</h2>
@@ -147,7 +139,7 @@
             </div>
         </div>
 
-        <!-- Video Container -->
+        <!-- Video Player Section -->
         <div class="video-container">
             <div class="video-player">
                 <h2>Video Player</h2>
@@ -160,7 +152,7 @@
             </div>
         </div>
 
-        <!-- Pagination Controls -->
+        <!-- Pagination Section -->
         <div class="pagination">
             <button id="prev" onclick="changePage(-1)">Previous</button>
             <button id="next" onclick="changePage(1)">Next</button>
@@ -169,70 +161,72 @@
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        let videoData = [];
+        let videoData = {}; // Store JSON data here or fetch it via API
         let currentPage = 1;
-        const videosPerPage = 10;
+        const videosPerPage = 5;
+        const maxPages = Math.ceil(Object.keys(videoData).length / videosPerPage);
+        const thumbnailsContainer = document.getElementById('thumbnails');
+        const videoElement = document.getElementById('video');
 
-        // Function to fetch and display video data
+        // Function to load videos based on the current page
+        function loadVideos() {
+            const startIndex = (currentPage - 1) * videosPerPage;
+            const endIndex = startIndex + videosPerPage;
+            const currentVideos = Object.keys(videoData).slice(startIndex, endIndex);
+
+            // Clear previous thumbnails
+            thumbnailsContainer.innerHTML = '';
+
+            currentVideos.forEach((videoId) => {
+                const video = videoData[videoId];
+                const videoThumbnail = document.createElement('img');
+                videoThumbnail.src = video.thumbnails[0]; // Use the first thumbnail as default
+                videoThumbnail.alt = video.name;
+                videoThumbnail.className = 'thumbnail';
+                videoThumbnail.onclick = () => playVideo(videoId);
+                thumbnailsContainer.appendChild(videoThumbnail);
+            });
+
+            // Toggle pagination buttons visibility
+            document.getElementById('prev').disabled = currentPage === 1;
+            document.getElementById('next').disabled = currentPage === maxPages;
+        }
+
+        // Function to change the page (next or previous)
+        function changePage(direction) {
+            currentPage += direction;
+            loadVideos();
+        }
+
+        // Function to play a selected video
+        function playVideo(videoId) {
+            const video = videoData[videoId];
+            const hls = new Hls();
+            if (Hls.isSupported()) {
+                hls.loadSource(video.video_url);
+                hls.attachMedia(videoElement);
+            } else {
+                videoElement.src = video.video_url;
+            }
+            videoElement.play();
+        }
+
+        // Function to handle age verification
+        function acceptAge() {
+            document.getElementById('age-warning').style.display = 'none';
+            loadVideos();
+        }
+
+        // Fetch video data (simulate fetching from the JSON file)
         fetch('video_data.json')
             .then(response => response.json())
             .then(data => {
-                videoData = Object.values(data);
-                displayVideos();
-            })
-            .catch(error => console.log("Error fetching video data: ", error));
-
-        // Function to accept age and remove the age verification popup
-        function acceptAge() {
-            document.getElementById('age-warning').style.display = 'none';
-        }
-
-        // Function to display videos based on the current page
-        function displayVideos() {
-            const startIndex = (currentPage - 1) * videosPerPage;
-            const endIndex = startIndex + videosPerPage;
-
-            const paginatedVideos = videoData.slice(startIndex, endIndex);
-            const thumbnailsContainer = document.getElementById('thumbnails');
-            thumbnailsContainer.innerHTML = '';
-
-            // Create video thumbnails and player setup
-            paginatedVideos.forEach(video => {
-                const thumbnail = document.createElement('img');
-                thumbnail.src = video.thumbnail_url;
-                thumbnail.alt = 'Video Thumbnail';
-                thumbnail.classList.add('thumbnail');
-                thumbnail.onclick = () => loadVideo(video.video_url);
-
-                thumbnailsContainer.appendChild(thumbnail);
+                videoData = data;
+                loadVideos();
             });
 
-            // Update pagination buttons visibility
-            document.getElementById('prev').disabled = currentPage === 1;
-            document.getElementById('next').disabled = currentPage * videosPerPage >= videoData.length;
-        }
-
-        // Function to load video into the player
-        function loadVideo(videoUrl) {
-            const videoElement = document.getElementById('video');
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(videoUrl);
-                hls.attachMedia(videoElement);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    videoElement.play();
-                });
-            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
-                videoElement.src = videoUrl;
-                videoElement.play();
-            }
-        }
-
-        // Function to handle pagination
-        function changePage(direction) {
-            currentPage += direction;
-            displayVideos();
-        }
+        // Display the age verification popup on page load
+        window.onload = () => document.getElementById('age-warning').style.display = 'flex';
     </script>
 </body>
 
