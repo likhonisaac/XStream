@@ -10,7 +10,6 @@
     <meta property="og:description" content="Experience the future of web applications with our cutting-edge HLS player and interactive features.">
     <meta property="og:image" content="https://yourdomain.com/path/to/your/image.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@yourhandle">
     <title>Ultimate Web App - Advanced Streaming &amp; Interactive Experience</title>
     
     <!-- CDN Imports -->
@@ -21,6 +20,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chroma-js@2.4.2/chroma.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
     <style>
+        /* Global Styles */
         :root {
             --primary-color: #3498db;
             --secondary-color: #2ecc71;
@@ -28,15 +28,12 @@
             --text-light: #ffffff;
             --text-dark: #333333;
         }
-
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--background-dark);
             color: var(--text-light);
-            line-height: 1.6;
-            overflow-x: hidden;
         }
-
+        /* Header Styles */
         .header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             padding: 1rem;
@@ -45,7 +42,7 @@
             top: 0;
             z-index: 1000;
         }
-
+        /* Video Player Styles */
         .video-player-container {
             position: relative;
             background: #000;
@@ -54,12 +51,11 @@
             margin: 20px 0;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
-
         .video-player {
             width: 100%;
             aspect-ratio: 16/9;
         }
-
+        /* Custom Controls */
         .custom-controls {
             position: absolute;
             bottom: 0;
@@ -70,156 +66,33 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-
         .video-player-container:hover .custom-controls {
             opacity: 1;
         }
-
-        .progress-bar {
-            width: 100%;
-            height: 5px;
-            background: rgba(255,255,255,0.3);
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .progress {
-            width: 0;
-            height: 100%;
-            background: var(--primary-color);
-        }
-
-        .control-buttons {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .control-button {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .control-button:hover {
-            color: var(--primary-color);
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-        }
-
-        .volume-slider {
-            width: 80px;
-            margin-left: 10px;
-        }
-
+        /* Thumbnail Grid */
         .thumbnail-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             padding: 20px 0;
         }
-
         .thumbnail-item {
-            position: relative;
             border-radius: 8px;
             overflow: hidden;
             transition: transform 0.3s;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
         .thumbnail-item:hover {
             transform: translateY(-5px);
         }
-
         .thumbnail-item img {
             width: 100%;
             aspect-ratio: 16/9;
-            object-fit: cover;
-        }
-
-        .thumbnail-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            padding: 10px;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-
-        #colorPalette {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .color-swatch {
-            width: 50px;
-            height: 50px;
-            margin: 0 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .color-swatch:hover {
-            transform: scale(1.1);
-        }
-
-        #analyticsChart {
-            margin-top: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        #loadingSpinner {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-        }
-
-        .dark-mode {
-            background-color: #121212;
-            color: #ffffff;
-        }
-
-        .light-mode {
-            background-color: #ffffff;
-            color: #121212;
         }
     </style>
 </head>
 <body>
+    <!-- Header with Navbar -->
     <header class="header">
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
@@ -229,273 +102,117 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#videoPlayer"><i class="fas fa-video"></i> Player</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#features"><i class="fas fa-star"></i> Features</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#analytics"><i class="fas fa-chart-bar"></i> Analytics</a>
-                        </li>
-                        <li class="nav-item">
-                            <button id="darkModeToggle" class="btn btn-outline-light">
-                                <i class="fas fa-moon"></i>
-                            </button>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="#videoPlayer"><i class="fas fa-video"></i> Player</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                        <li class="nav-item"><button id="darkModeToggle" class="btn btn-outline-light"><i class="fas fa-moon"></i></button></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
+    <!-- Main Container -->
     <div class="container mt-5">
+        <!-- Video Player Section -->
         <section id="videoPlayer">
             <div class="video-player-container">
                 <video id="mainPlayer" class="video-player" playsinline></video>
                 <div class="custom-controls">
-                    <div class="progress-bar" id="progressBar">
-                        <div class="progress" id="progress"></div>
-                    </div>
-                    <div class="control-buttons">
-                        <button class="control-button" id="playPauseBtn"><i class="fas fa-play"></i></button>
-                        <div class="volume-control">
-                            <button class="control-button" id="muteBtn"><i class="fas fa-volume-up"></i></button>
-                            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
-                        </div>
-                        <button class="control-button" id="fullscreenBtn"><i class="fas fa-expand"></i></button>
-                        <span id="currentTime">0:00 / 0:00</span>
-                        <button class="control-button" id="qualityBtn"><i class="fas fa-cog"></i></button>
-                        <select id="qualitySelect" class="form-select form-select-sm" style="display: none;"></select>
-                    </div>
+                    <button id="playPauseBtn"><i class="fas fa-play"></i></button>
+                    <button id="muteBtn"><i class="fas fa-volume-up"></i></button>
+                    <button id="fullscreenBtn"><i class="fas fa-expand"></i></button>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="100">
+                    <span id="currentTime">0:00 / 0:00</span>
                 </div>
             </div>
         </section>
 
-        <section id="colorPalette" class="mt-4">
-            <!-- Color swatches will be dynamically added here -->
+        <!-- Thumbnail Video Grid -->
+        <section class="thumbnail-grid" id="thumbnailGrid">
+            <!-- Thumbnails populated here by JavaScript -->
         </section>
 
-        <section id="features" class="mt-5">
-            <h2 class="text-center mb-4">Key Features</h2>
-            <div class="row">
-                <div class="col-md-4" data-aos="fade-up">
-                    <div class="feature-card">
-                        <i class="fas fa-tachometer-alt feature-icon"></i>
-                        <h3>High Performance</h3>
-                        <p>Experience lightning-fast video playback and smooth interactions.</p>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card">
-                        <i class="fas fa-palette feature-icon"></i>
-                        <h3>Dynamic Theming</h3>
-                        <p>Customize the app's look with our intelligent color palette generator.</p>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card">
-                        <i class="fas fa-chart-line feature-icon"></i>
-                        <h3>Advanced Analytics</h3>
-                        <p>Gain insights into your viewing habits with detailed analytics.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+        <!-- Analytics Section -->
         <section id="analytics" class="mt-5">
             <h2 class="text-center mb-4">Viewing Analytics</h2>
             <canvas id="analyticsChart"></canvas>
         </section>
     </div>
 
-    <div id="loadingSpinner" class="spinner-border text-primary" role="status" style="display: none;">
-        <span class="visually-hidden">Loading...</span>
-    </div>
-
-    <!-- CDN Scripts -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    
     <script>
-        // Initialize AOS
+        // Initialize AOS and global variables
         AOS.init();
-
         const player = document.getElementById('mainPlayer');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const muteBtn = document.getElementById('muteBtn');
-        const volumeSlider = document.getElementById('volumeSlider');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progress = document.getElementById('progress');
+        const volumeSlider = document.getElementById('volumeSlider');
         const currentTime = document.getElementById('currentTime');
-        const qualityBtn = document.getElementById('qualityBtn');
-        const qualitySelect = document.getElementById('qualitySelect');
-        const loadingSpinner = document.getElementById('loadingSpinner');
+        const thumbnailGrid = document.getElementById('thumbnailGrid');
         const colorPalette = document.getElementById('colorPalette');
         const darkModeToggle = document.getElementById('darkModeToggle');
 
-        let hls;
-
-        // Fetch video data
+        // Load Video Data
         fetch('https://raw.githubusercontent.com/likhonisaac/XStream/refs/heads/main/video_data.json')
             .then(response => response.json())
             .then(data => {
-                const videoData = data;
-                loadVideo(Object.keys(videoData)[0], videoData);
-            })
-            .catch(error => console.error("Error fetching video data:", error));
-
-        function loadVideo(videoId, videoData) {
-            const video = videoData[videoId];
-            loadingSpinner.style.display = 'block';
-
-            if (Hls.isSupported()) {
-                if (hls) {
-                    hls.destroy();
+                for (const videoId in data) {
+                    const video = data[videoId];
+                    const thumbnail = document.createElement('div');
+                    thumbnail.classList.add('thumbnail-item');
+                    thumbnail.innerHTML = `<img src="${video.thumbnail}" alt="${video.title}">`;
+                    thumbnail.onclick = () => loadVideo(video.video_url);
+                    thumbnailGrid.appendChild(thumbnail);
                 }
-                hls = new Hls({
-                    debug: false,
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                });
-                hls.loadSource(video.video_url);
-                hls.attachMedia(player);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    loadingSpinner.style.display = 'none';
-                    player.play();
-                    updateQualityLevels();
-                });
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        console.error('HLS error:', data);
-                        loadingSpinner.style.display = 'none';
-                        alert('Error loading video. Please try again.');
-                    }
-                });
-            } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
-                player.src = video.video_url;
-                player.addEventListener('loadedmetadata', () => {
-                    loadingSpinner.style.display = 'none';
-                    player.play();
-                });
-            }
-        }
-
-        function updateQualityLevels() {
-            const levels = hls.levels;
-            qualitySelect.innerHTML = '';
-            levels.forEach((level, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.text = `${level.height}p`;
-                qualitySelect.appendChild(option);
             });
-            qualitySelect.value = hls.currentLevel;
+
+        function loadVideo(videoUrl) {
+            player.src = videoUrl;
+            player.play();
         }
 
-        // Player controls
+        // Player Controls
         playPauseBtn.onclick = () => player.paused ? player.play() : player.pause();
         player.onplay = () => playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
         player.onpause = () => playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-
+        
         muteBtn.onclick = () => {
             player.muted = !player.muted;
             muteBtn.innerHTML = player.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
         };
-
+        
         volumeSlider.oninput = (e) => {
             player.volume = e.target.value / 100;
-            player.muted = player.volume === 0;
-            muteBtn.innerHTML = player.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+            muteBtn.innerHTML = player.volume === 0 ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
         };
+        
+        fullscreenBtn.onclick = () => player.requestFullscreen();
 
-        fullscreenBtn.onclick = () => {
-            if (!document.fullscreenElement) {
-                player.requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
-        };
-
-        progressBar.onclick = (e) => {
-            const pos = (e.pageX - progressBar.offsetLeft) / progressBar.offsetWidth;
-            player.currentTime = pos * player.duration;
-        };
-
-        player.ontimeupdate = () => {
-            const pos = player.currentTime / player.duration;
-            progress.style.width = `${pos * 100}%`;
-            currentTime.textContent = `${formatTime(player.currentTime)} / ${formatTime(player.duration)}`;
-        };
-
-        function formatTime(time) {
-            const minutes = Math.floor(time / 60);
-            const seconds = Math.floor(time % 60);
-            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        qualityBtn.onclick = () => {
-            qualitySelect.style.display = qualitySelect.style.display === 'none' ? 'inline-block' : 'none';
-        };
-
-        qualitySelect.onchange = (e) => {
-            hls.currentLevel = parseInt(e.target.value);
-        };
-
-        // Color palette generator
-        function generateColorPalette() {
-            const baseColor = chroma.random();
-            const palette = chroma.scale([baseColor, 'white']).mode('lch').colors(5);
-
-            colorPalette.innerHTML = '';
-            palette.forEach(color => {
-                const swatch = document.createElement('div');
-                swatch.className = 'color-swatch';
-                swatch.style.backgroundColor = color;
-                swatch.onclick = () => document.documentElement.style.setProperty('--primary-color', color);
-                colorPalette.appendChild(swatch);
-            });
-        }
-
-        generateColorPalette();
-
-        // Dark mode toggle
-        darkModeToggle.onclick = () => {
-            document.body.classList.toggle('dark-mode');
-            document.body.classList.toggle('light-mode');
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        };
-
-        // Analytics chart
+        // Analytics Chart
         const ctx = document.getElementById('analyticsChart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
                 datasets: [{
-                    label: 'Viewing Time (minutes)',
-                    data: [120, 90, 150, 180, 130, 200, 160],
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
+                    label: 'Views',
+                    data: [100, 200, 300, 150, 200, 250, 300],
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                    fill: true
                 }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
             }
         });
 
-        // Error handling
-        player.onerror = () => {
-            console.error('Video error:', player.error);
-            loadingSpinner.style.display = 'none';
-            alert('Error playing video. Please try again.');
+        // Dark Mode Toggle
+        darkModeToggle.onclick = () => {
+            document.body.classList.toggle('dark-mode');
+            darkModeToggle.innerHTML = document.body.classList.contains('dark-mode') 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
         };
     </script>
 </body>
