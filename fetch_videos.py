@@ -5,56 +5,76 @@ from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.porncucumber.com/videos/"
 
-# Function to fetch and parse the page to get video data
+# Function to fetch video data for a specific folder
 def fetch_video_data(video_folder):
     folder_url = f"{BASE_URL}{video_folder}/"
     response = requests.get(folder_url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    if response.status_code != 200:
+        print(f"Failed to fetch data for folder: {video_folder}")
+        return None
 
-    # Collect video info
+    soup = BeautifulSoup(response.text, 'html.parser')
     video_data = {}
+
+    # Extract video name, URL, and generate thumbnails
     for link in soup.find_all('a', href=True):
         href = link['href']
         if href.endswith('.mp4'):
             video_url = f"{folder_url}{href}"
-            thumbnail_url = f"{folder_url}{href.replace('.mp4', '.jpg')}"
-            video_data[video_folder] = {
-                'video_url': video_url,
-                'thumbnail_url': thumbnail_url
+            video_name = os.path.splitext(href)[0].replace('%20', ' ')
+            video_id = video_folder  # Using folder name as unique ID
+            thumbnails = [
+                f"{folder_url}{href.replace('.mp4', f'_thumbnail{i}.jpg')}" for i in range(1, 5)
+            ]
+
+            # Construct video data
+            video_data[video_id] = {
+                "name": video_name,
+                "video_url": video_url,
+                "thumbnails": thumbnails
             }
 
     return video_data
 
-# Function to get all available video folders from the base URL
+# Function to fetch all available video folders
 def get_video_folders():
     response = requests.get(BASE_URL)
+    if response.status_code != 200:
+        print("Failed to fetch video folders from base URL.")
+        return []
+
     soup = BeautifulSoup(response.text, 'html.parser')
-    
-    # Find all links to video folders (directories)
     folders = []
+
+    # Extract folder links
     for link in soup.find_all('a', href=True):
         href = link['href']
-        if href.endswith('/'):  # Assuming folders have a trailing slash
+        if href.endswith('/'):  # Assuming folders have trailing slashes
             folder_name = href.strip('/')
             folders.append(folder_name)
 
     return folders
 
-# Main function to collect video data and save to JSON
+# Main function to fetch and save video data
 def main():
-    video_folders = get_video_folders()  # Automatically fetch the list of video folders
+    video_folders = get_video_folders()
     all_video_data = {}
+
+    if not video_folders:
+        print("No video folders found.")
+        return
 
     for folder in video_folders:
         print(f"Fetching data for folder: {folder}")
         data = fetch_video_data(folder)
-        all_video_data.update(data)
+        if data:
+            all_video_data.update(data)
 
-    # Save the video data to a JSON file
-    with open('video_data.json', 'w') as f:
-        json.dump(all_video_data, f, indent=4)
+    # Save all video data to JSON
+    with open('video_data.json', 'w', encoding='utf-8') as f:
+        json.dump(all_video_data, f, indent=4, ensure_ascii=False)
 
-    print("Video data has been successfully fetched and saved to video_data.json.")
+    print("Video data successfully fetched and saved to video_data.json.")
 
 if __name__ == "__main__":
     main()
