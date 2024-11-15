@@ -53,7 +53,7 @@ def get_video_folders():
             folder_name = href.strip('/')
             folders.append(folder_name)
 
-    return folders
+    return folders[:200]  # Limit to 200 folders
 
 # Main function to fetch and save video data
 def main():
