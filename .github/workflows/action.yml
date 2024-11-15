@@ -3,7 +3,7 @@ name: Fetch Video Data and Update Repository
 on:
   schedule:
     # Runs the workflow every 12 hours (Cron format)
-    - cron: '0 */12 * * *'  # This will run at the start of every 12th hour
+    - cron: '0 */12 * * *'  # At the start of every 12th hour
   push:
     branches:
       - main  # Run when code is pushed to the main branch
@@ -35,14 +35,16 @@ jobs:
 
     # Step 5: Commit and push changes
     - name: Commit and push changes
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub's built-in token
       run: |
-        git config --global user.email "your-email@example.com"
-        git config --global user.name "Your Name"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "GitHub Actions Bot"
         git add .
-        git commit -m "Update video data"
+        git diff-index --quiet HEAD || git commit -m "Update video data"
         git push origin main
 
-    # Optional: Clean up and confirm the updates
+    # Step 6: Clean up and confirm the updates
     - name: Clean up and confirm updates
       run: |
-        echo "Video data updated successfully"
+        echo "Video data updated successfully!"
